@@ -1,10 +1,12 @@
-
 import { db } from "./firebase";
 
 import {
   collection,
   addDoc,
   getDocs,
+  deleteDoc,
+  updateDoc,
+  doc,
 } from "firebase/firestore";
 
 import { useState, useEffect } from "react";
@@ -102,6 +104,67 @@ function App() {
 
   const [usuarioActual, setUsuarioActual] = useState(null);
 
+  // 🔥 SISTEMA
+
+  const [pantalla, setPantalla] = useState("inicio");
+
+  const [parte, setParte] = useState("");
+  const [modelo, setModelo] = useState("");
+  const [descripcion, setDescripcion] = useState("");
+  const [org, setOrg] = useState("");
+
+const [imagen1, setImagen1] = useState(null);
+const [imagen2, setImagen2] = useState(null);
+const [imagen3, setImagen3] = useState(null);
+const [imagen4, setImagen4] = useState(null);
+
+  const [imagenGrande, setImagenGrande] = useState(null);
+
+  const [materiales, setMateriales] = useState([]);
+
+  const [organizacionSeleccionada, setOrganizacionSeleccionada] = useState("");
+  const [busqueda, setBusqueda] = useState("");
+  const [editandoId, setEditandoId] = useState(null);
+
+const [parteEdit, setParteEdit] = useState("");
+const [modeloEdit, setModeloEdit] = useState("");
+const [orgEdit, setOrgEdit] = useState("");
+
+  useEffect(() => {
+
+    const cargarMateriales = async () => {
+
+      const querySnapshot = await getDocs(
+        collection(db, "materiales")
+      );
+
+      const lista = [];
+
+      querySnapshot.forEach((docu) => {
+
+        lista.push({
+          id: docu.id,
+          ...docu.data(),
+        });
+
+      });
+
+      setMateriales(lista);
+
+    };
+
+    cargarMateriales();
+
+    const intervalo = setInterval(() => {
+
+      cargarMateriales();
+
+    }, 2000);
+
+    return () => clearInterval(intervalo);
+
+  }, []);
+
   const iniciarSesion = () => {
 
     const usuarioEncontrado = usuariosSistema.find(
@@ -127,59 +190,66 @@ function App() {
 
   };
 
-  // 🔥 SISTEMA
+  const borrarMaterial = async (id) => {
 
-  const [pantalla, setPantalla] = useState("inicio");
-
-  const [parte, setParte] = useState("");
-  const [modelo, setModelo] = useState("");
-  const [org, setOrg] = useState("");
-
-  const [imagen1, setImagen1] = useState(null);
-  const [imagen2, setImagen2] = useState(null);
-  const [imagen3, setImagen3] = useState(null);
-  const [imagen4, setImagen4] = useState(null);
-
-  const [imagenGrande, setImagenGrande] = useState(null);
-
-  const [materiales, setMateriales] = useState([]);
-
-useEffect(() => {
-
-  const cargarMateriales = async () => {
-
-    const querySnapshot = await getDocs(
-      collection(db, "materiales")
+    const confirmar = window.confirm(
+      "¿Borrar material?"
     );
 
-    const lista = [];
+    if (!confirmar) return;
 
-    querySnapshot.forEach((doc) => {
+    await deleteDoc(
+      doc(db, "materiales", id)
+    );
 
-      lista.push(doc.data());
-
-    });
-
-    setMateriales(lista);
-
-    console.log(lista);
+    setMateriales(
+      materiales.filter(
+        (item) => item.id !== id
+      )
+    );
 
   };
 
-  cargarMateriales();
+  const guardarEdicion = async () => {
 
-  const intervalo = setInterval(() => {
+  const ref = doc(
+    db,
+    "materiales",
+    editandoId
+  );
 
-    cargarMateriales();
+  await updateDoc(ref, {
 
-  }, 2000);
+    parte: parteEdit,
+    modelo: modeloEdit,
+    org: orgEdit,
 
-  return () => clearInterval(intervalo);
+  });
 
-}, []);
+  setMateriales(
 
-  const [organizacionSeleccionada, setOrganizacionSeleccionada] = useState("");
-  const [busqueda, setBusqueda] = useState("");
+    materiales.map((item) =>
+
+      item.id === editandoId
+
+        ? {
+            ...item,
+            parte: parteEdit,
+            modelo: modeloEdit,
+            org: orgEdit,
+          }
+
+        : item
+
+    )
+
+  );
+
+  setEditandoId(null);
+
+  alert("Material actualizado");
+
+};
 
   const sidebarStyle = {
     width: "300px",
@@ -210,133 +280,118 @@ useEffect(() => {
     fontSize: "18px",
   };
 
-  // 🔐 PANTALLA LOGIN
+  // 🔐 LOGIN
 
   if (!logueado) {
 
-    return (
+  return (
+
+    <div
+      style={{
+        width: "100%",
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        background:
+          "linear-gradient(135deg,#63d3d9,#d9ffff)",
+        fontFamily: "Arial",
+      }}
+    >
 
       <div
-
         style={{
-          width: "100%",
-          height: "100vh",
+          width: "900px",
+          height: "500px",
           display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          background:
-            "linear-gradient(135deg,#63d3d9,#d9ffff)",
-          fontFamily: "Arial",
+          borderRadius: "20px",
+          overflow: "hidden",
+          boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+          background: "white",
         }}
       >
 
         <div
-
           style={{
-            width: "900px",
-            height: "500px",
+            flex: 1,
+            background:
+              "linear-gradient(135deg,#63d3d9,#b8ffff)",
+          }}
+        />
+
+        <div
+          style={{
+            width: "350px",
+            padding: "50px",
             display: "flex",
-            borderRadius: "20px",
-            overflow: "hidden",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
-            background: "white",
+            flexDirection: "column",
+            justifyContent: "center",
           }}
         >
 
-          <div
-
+          <h1
             style={{
-              flex: 1,
-              background:
-                "linear-gradient(135deg,#63d3d9,#b8ffff)",
+              marginBottom: "40px",
+            }}
+          >
+            Login
+          </h1>
+
+          <input
+            placeholder="Número de empleado"
+            value={usuarioInput}
+            onChange={(e) =>
+              setUsuarioInput(e.target.value)
+            }
+            style={{
+              padding: "15px",
+              marginBottom: "20px",
+              borderRadius: "10px",
+              border: "1px solid #ccc",
+              fontSize: "16px",
             }}
           />
 
-          <div
-
+          <input
+            type="password"
+            placeholder="Contraseña"
+            value={passwordInput}
+            onChange={(e) =>
+              setPasswordInput(e.target.value)
+            }
             style={{
-              width: "350px",
-              padding: "50px",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
+              padding: "15px",
+              marginBottom: "20px",
+              borderRadius: "10px",
+              border: "1px solid #ccc",
+              fontSize: "16px",
+            }}
+          />
+
+          <button
+            onClick={iniciarSesion}
+            style={{
+              padding: "15px",
+              border: "none",
+              borderRadius: "10px",
+              background: "#37b8c7",
+              color: "white",
+              fontSize: "18px",
+              cursor: "pointer",
             }}
           >
-
-            <h1
-              style={{
-                marginBottom: "40px",
-              }}
-            >
-              Login
-            </h1>
-
-            <input
-
-              placeholder="Número de empleado"
-
-              value={usuarioInput}
-
-              onChange={(e) =>
-                setUsuarioInput(e.target.value)
-              }
-
-              style={{
-                padding: "15px",
-                marginBottom: "20px",
-                borderRadius: "10px",
-                border: "1px solid #ccc",
-                fontSize: "16px",
-              }}
-            />
-
-            <input
-
-              type="password"
-
-              placeholder="Contraseña"
-
-              value={passwordInput}
-
-              onChange={(e) =>
-                setPasswordInput(e.target.value)
-              }
-
-              style={{
-                padding: "15px",
-                marginBottom: "20px",
-                borderRadius: "10px",
-                border: "1px solid #ccc",
-                fontSize: "16px",
-              }}
-            />
-
-            <button
-
-              onClick={iniciarSesion}
-
-              style={{
-                padding: "15px",
-                border: "none",
-                borderRadius: "10px",
-                background: "#37b8c7",
-                color: "white",
-                fontSize: "18px",
-                cursor: "pointer",
-              }}
-            >
-              Iniciar sesión
-            </button>
-
-          </div>
+            Iniciar sesión
+          </button>
 
         </div>
 
       </div>
 
-    );
+    </div>
 
-  }
+  );
+
+}
 
   // 🔥 SISTEMA PRINCIPAL
 
@@ -382,12 +437,12 @@ useEffect(() => {
           ➕ Registrar
         </button>
 
-       <button
-  style={buttonMenu}
-  onClick={() => setPantalla("buscar")}
->
-  🔎 Buscar
-</button>
+        <button
+          style={buttonMenu}
+          onClick={() => setPantalla("buscar")}
+        >
+          🔎 Buscar
+        </button>
 
         <button
           style={buttonMenu}
@@ -395,7 +450,6 @@ useEffect(() => {
         >
           📂 Organizaciones
         </button>
-
 
         <button
 
@@ -475,11 +529,25 @@ useEffect(() => {
                   width: "220px",
                 }}
               >
-               <h1>{usuariosSistema.length}</h1>
+                <h1>{usuariosSistema.length}</h1>
                 <p>Usuarios</p>
               </div>
+              
 
-              <div
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            <div
                 style={{
                   background: "white",
                   padding: "30px",
@@ -508,30 +576,41 @@ useEffect(() => {
             }}
           >
 
-            <h1>Registrar material</h1>
+         <h1>Registrar material</h1>
 
-            <input
-              placeholder="Número de parte"
-              value={parte}
-              onChange={(e) => setParte(e.target.value)}
-              style={inputStyle}
-            />
+<input
+  placeholder="Número de parte"
+  value={parte}
+  onChange={(e) => setParte(e.target.value)}
+  style={inputStyle}
+/>
 
-            <input
-              placeholder="Modelo"
-              value={modelo}
-              onChange={(e) => setModelo(e.target.value)}
-              style={inputStyle}
-            />
+<input
+  placeholder="Modelo"
+  value={modelo}
+  onChange={(e) => setModelo(e.target.value)}
+  style={inputStyle}
+/>
 
-            <input
-              placeholder="ORG"
-              value={org}
-              onChange={(e) => setOrg(e.target.value)}
-              style={inputStyle}
-            />
+<input
+  placeholder="Descripción del componente"
 
-            {/* IMÁGENES */}
+  value={descripcion}
+
+  onChange={(e) =>
+    setDescripcion(e.target.value)
+  }
+
+  style={inputStyle}
+/>
+
+<input
+  placeholder="ORG"
+  value={org}
+  onChange={(e) => setOrg(e.target.value)}
+  style={inputStyle}
+/>
+
 
             <div
               style={{
@@ -554,13 +633,19 @@ useEffect(() => {
                 type="file"
                 accept="image/*"
 
-                onChange={(e) =>
-                  setImagen1(
-                    URL.createObjectURL(
-                      e.target.files[0]
-                    )
-                  )
-                }
+               onChange={(e) => {
+
+  const file = e.target.files[0];
+
+  const reader = new FileReader();
+
+  reader.onloadend = () => {
+    setImagen1(reader.result);
+  };
+
+  reader.readAsDataURL(file);
+
+}}
 
                 style={inputStyle}
               />
@@ -571,13 +656,19 @@ useEffect(() => {
                 type="file"
                 accept="image/*"
 
-                onChange={(e) =>
-                  setImagen2(
-                    URL.createObjectURL(
-                      e.target.files[0]
-                    )
-                  )
-                }
+                onChange={(e) => {
+
+  const file = e.target.files[0];
+
+  const reader = new FileReader();
+
+  reader.onloadend = () => {
+    setImagen2(reader.result);
+  };
+
+  reader.readAsDataURL(file);
+
+}}
 
                 style={inputStyle}
               />
@@ -588,13 +679,19 @@ useEffect(() => {
                 type="file"
                 accept="image/*"
 
-                onChange={(e) =>
-                  setImagen3(
-                    URL.createObjectURL(
-                      e.target.files[0]
-                    )
-                  )
-                }
+               onChange={(e) => {
+
+  const file = e.target.files[0];
+
+  const reader = new FileReader();
+
+  reader.onloadend = () => {
+    setImagen3(reader.result);
+  };
+
+  reader.readAsDataURL(file);
+
+}}
 
                 style={inputStyle}
               />
@@ -605,84 +702,105 @@ useEffect(() => {
                 type="file"
                 accept="image/*"
 
-                onChange={(e) =>
-                  setImagen4(
-                    URL.createObjectURL(
-                      e.target.files[0]
-                    )
-                  )
-                }
+               onChange={(e) => {
+
+  const file = e.target.files[0];
+
+  const reader = new FileReader();
+
+reader.onloadend = () => {
+  setImagen4(reader.result);
+};
+
+  reader.readAsDataURL(file);
+
+}}
 
                 style={inputStyle}
               />
 
             </div>
 
-           <button
+            <button
 
-  onClick={async () => {
+              onClick={async () => {
 
-    if (!parte || !modelo || !org) {
+                if (!parte || !modelo || !org) {
 
-      alert("Llena todos los campos");
+                  alert("Llena todos los campos");
 
-      return;
-    }
+                  return;
+                }
 
-   const nuevoMaterial = {
+            const nuevoMaterial = {
 
   parte,
   modelo,
+  descripcion,
 
   org: org.toUpperCase(),
 
   imagenes: [
+
     imagen1,
     imagen2,
     imagen3,
     imagen4,
-  ],
+
+  ].filter(
+    (img) =>
+      typeof img === "string" &&
+      img.trim() !== ""
+  ),
 
 };
+
+console.log(
+  imagen1,
+  imagen2,
+  imagen3,
+  imagen4
+);
 
 await addDoc(
   collection(db, "materiales"),
   nuevoMaterial
 );
 
-setMateriales([
-  ...materiales,
-  nuevoMaterial,
-]);
+                setMateriales([
+                  ...materiales,
+                  nuevoMaterial,
+                ]);
 
-alert("Material guardado en Firebase");
+                alert("Material guardado en Firebase");
 
-    setParte("");
-    setModelo("");
-    setOrg("");
+              setParte("");
+setModelo("");
+setDescripcion("");
+setOrg("");
 
-    setImagen1(null);
-    setImagen2(null);
-    setImagen3(null);
-    setImagen4(null);
+                setImagen1(null);
+                setImagen2(null);
+                setImagen3(null);
+                setImagen4(null);
 
-  }}
+              }}
 
-  style={{
-    width: "100%",
-    padding: "20px",
-    marginTop: "30px",
-    border: "none",
-    borderRadius: "12px",
-    background: "#2f64e1",
-    color: "white",
-    fontSize: "22px",
-    cursor: "pointer",
-  }}
+              style={{
+                width: "100%",
+                padding: "20px",
+                marginTop: "30px",
+                border: "none",
+                borderRadius: "12px",
+                background: "#2f64e1",
+                color: "white",
+                fontSize: "22px",
+                cursor: "pointer",
+              }}
 
->
-  Guardar material
-</button>
+            >
+              Guardar material
+            </button>
 
           </div>
 
@@ -712,12 +830,16 @@ alert("Material guardado en Firebase");
 
               {["SHTV", "SOTV", "SPTV", "FBC0", "FBC1", "EV03"].map((orgItem) => (
 
-                <button
-                  key={orgItem}
-                  onClick={() =>
-                    setOrganizacionSeleccionada(orgItem)
-                  }
+               <button
+  key={orgItem}
 
+  onClick={() => {
+
+    setEditandoId(null);
+
+    setOrganizacionSeleccionada(orgItem);
+
+  }}
                   style={{
                     padding: "18px",
                     border: "none",
@@ -735,7 +857,19 @@ alert("Material guardado en Firebase");
 
             </div>
 
-            {/* RESULTADOS */}
+
+
+
+
+
+
+
+
+
+
+
+
+                        {/* RESULTADOS */}
 
             {organizacionSeleccionada && (
 
@@ -749,25 +883,26 @@ alert("Material guardado en Firebase");
                   Materiales de {organizacionSeleccionada}
                 </h2>
 
- {materiales
-  .filter((item) => {
+                {materiales
 
-    if (!item.org) return false;
+                  .filter((item) => {
 
-    return (
-      item.org
-        .toString()
-        .trim()
-        .toUpperCase() ===
-      organizacionSeleccionada
-        .toString()
-        .trim()
-        .toUpperCase()
-    );
+                    if (!item.org) return false;
 
-  })
+                    return (
+                      item.org
+                        .toString()
+                        .trim()
+                        .toUpperCase() ===
+                      organizacionSeleccionada
+                        .toString()
+                        .trim()
+                        .toUpperCase()
+                    );
 
-  .map((item, index) => (
+                  })
+
+                  .map((item, index) => (
 
                     <div
                       key={index}
@@ -776,79 +911,229 @@ alert("Material guardado en Firebase");
                         padding: "20px",
                         borderRadius: "15px",
                         marginTop: "20px",
+                        position: "relative",
                       }}
                     >
+
+                      {/* 3 PUNTOS */}
+
+                      <details
+                        style={{
+                          position: "absolute",
+                          top: "15px",
+                          right: "20px",
+                        }}
+                      >
+
+                        <summary
+                          style={{
+                            cursor: "pointer",
+                            fontSize: "28px",
+                            listStyle: "none",
+                            userSelect: "none",
+                          }}
+                        >
+                          ⋮
+                        </summary>
+
+                        <div
+                          style={{
+                            background: "#f3f4f6",
+                            borderRadius: "10px",
+                            padding: "10px",
+                            marginTop: "10px",
+                            width: "180px",
+                            boxShadow: "0 5px 15px rgba(0,0,0,0.2)",
+                          }}
+                        >
+
+                         <button
+
+  onClick={() => {
+
+    setEditandoId(item.id);
+
+    setParteEdit(item.parte);
+    setModeloEdit(item.modelo);
+    setOrgEdit(item.org);
+
+  }}
+
+  style={{
+    width: "100%",
+    padding: "10px",
+    border: "none",
+    borderRadius: "8px",
+    marginBottom: "10px",
+    cursor: "pointer",
+  }}
+>
+  ✏️ Editar material
+</button>
+
+<button
+                            onClick={() =>
+                              borrarMaterial(item.id)
+                            }
+
+                            style={{
+                              width: "100%",
+                              padding: "10px",
+                              border: "none",
+                              borderRadius: "8px",
+                              background: "#dc2626",
+                              color: "white",
+                              cursor: "pointer",
+                            }}
+                          >
+                            🗑️ Borrar material
+
+
+                          </button>
+
+                        </div>
+
+                      </details>
 
                       <h3>
                         📦 {item.parte}
                       </h3>
 
-                      <p>
-                        Modelo: {item.modelo}
-                      </p>
+           <p>
+  Modelo: {item.modelo}
+</p>
 
-                      <p>
-                        Organización: {item.org}
-                      </p>
+<p>
+  Descripción: {item.descripcion}
+</p>
 
-                      {/* MOSTRAR IMÁGENES */}
+<p>
+  Organización: {item.org}
+</p>
 
-                      <div
-                        style={{
-                          display: "flex",
-                          gap: "10px",
-                          marginTop: "15px",
-                          flexWrap: "wrap",
-                        }}
-                      >
+{editandoId === item.id && (
+  <div
+    style={{
+      marginTop: "20px",
+      background: "#f3f4f6",
+      padding: "20px",
+      borderRadius: "15px",
+    }}
+  >
 
-              {(
-
-  item.imagenes ||
-
-  [
-    item.img1,
-    item.img2,
-    item.img3,
-    item.img4,
-  ]
-
-)?.map((img, index) => (
-
-  img && (
-
-    <img
-      key={index}
-
-      src={
-        img.startsWith("data:image")
-          ? img
-          : `data:image/jpeg;base64,${img}`
+    <input
+      value={parteEdit}
+      onChange={(e) =>
+        setParteEdit(e.target.value)
       }
+      placeholder="Parte"
+      style={inputStyle}
+    />
 
-      onClick={() =>
-        setImagenGrande(
-          img.startsWith("data:image")
-            ? img
-            : `data:image/jpeg;base64,${img}`
-        )
+    <input
+      value={modeloEdit}
+      onChange={(e) =>
+        setModeloEdit(e.target.value)
       }
+      placeholder="Modelo"
+      style={inputStyle}
+    />
+
+    <input
+      value={orgEdit}
+      onChange={(e) =>
+        setOrgEdit(e.target.value)
+      }
+      placeholder="Organización"
+      style={inputStyle}
+    />
+
+    <button
+
+      onClick={guardarEdicion}
 
       style={{
-        width: "120px",
-        height: "120px",
-        objectFit: "cover",
-        borderRadius: "12px",
+        width: "100%",
+        marginTop: "20px",
+        padding: "15px",
+        border: "none",
+        borderRadius: "10px",
+        background: "#16a34a",
+        color: "white",
         cursor: "pointer",
       }}
-    />
+    >
+      💾 Guardar cambios
+    </button>
+
+  </div>
+
+)}
+
+
+                   {/* IMÁGENES */}
+
+<div
+  style={{
+    display: "flex",
+    gap: "10px",
+    marginTop: "15px",
+    flexWrap: "wrap",
+  }}
+>
+
+  {(
+
+    Array.isArray(item.imagenes)
+
+      ? item.imagenes
+
+      : [
+          item.img1,
+          item.img2,
+          item.img3,
+          item.img4,
+        ]
 
   )
 
-))}
-                          
+    .filter(
+      (img) =>
+        typeof img === "string" &&
+        img.trim() !== ""
+    )
 
-                      </div>
+    .map((img, index) => (
+
+      <img
+        key={index}
+
+        src={
+          img.startsWith("data:image")
+            ? img
+            : `data:image/jpeg;base64,${img}`
+        }
+
+        onClick={() =>
+          setImagenGrande(
+            img.startsWith("data:image")
+              ? img
+              : `data:image/jpeg;base64,${img}`
+          )
+        }
+
+        style={{
+          width: "120px",
+          height: "120px",
+          objectFit: "cover",
+          borderRadius: "12px",
+          cursor: "pointer",
+        }}
+      />
+
+    ))}
+
+</div>
 
                     </div>
 
@@ -862,144 +1147,144 @@ alert("Material guardado en Firebase");
 
         )}
 
-      </div>
+        {/* BUSCAR MATERIAL */}
 
-{/* BUSCAR MATERIAL */}
-
-{pantalla === "buscar" && (
-
-<div
-  style={{
-    width: "80%",
-maxWidth: "1200px",
-    padding: "20px",
-  }}
->
-
-    <h1
-      style={{
-        fontSize: "40px",
-        marginBottom: "30px",
-      }}
-    >
-      🔎 Buscar material
-    </h1>
-
-    <input
-
-      type="text"
-
-      placeholder="Buscar por número de parte"
-
-      value={busqueda}
-
-      onChange={(e) =>
-        setBusqueda(e.target.value)
-      }
-
-      style={{
-        width: "95%",
-boxSizing: "border-box",
-        padding: "18px",
-        borderRadius: "12px",
-        border: "1px solid #ccc",
-        fontSize: "18px",
-      }}
-
-    />
-
-    <div
-      style={{
-        marginTop: "30px",
-      }}
-    >
-
-      {materiales
-
-        .filter((item) => {
-
-          if (!busqueda) return false;
-
-          return item.parte
-            ?.toString()
-            .toLowerCase()
-            .includes(
-              busqueda.toLowerCase()
-            );
-
-        })
-
-        .map((item, index) => (
+        {pantalla === "buscar" && (
 
           <div
-            key={index}
             style={{
-              background: "white",
+              width: "80%",
+              maxWidth: "1200px",
               padding: "20px",
-              borderRadius: "15px",
-              marginTop: "20px",
             }}
           >
 
-            <h2>
-              📦 {item.parte}
-            </h2>
+            <h1
+              style={{
+                fontSize: "40px",
+                marginBottom: "30px",
+              }}
+            >
+              🔎 Buscar material
+            </h1>
 
-            <p>
-              Modelo: {item.modelo}
-            </p>
+            <input
 
-            <p>
-              Organización: {item.org}
-            </p>
+              type="text"
+
+              placeholder="Buscar por número de parte"
+
+              value={busqueda}
+
+              onChange={(e) =>
+                setBusqueda(e.target.value)
+              }
+
+              style={{
+                width: "95%",
+                boxSizing: "border-box",
+                padding: "18px",
+                borderRadius: "12px",
+                border: "1px solid #ccc",
+                fontSize: "18px",
+              }}
+
+            />
+
+            <div
+              style={{
+                marginTop: "30px",
+              }}
+            >
+
+              {materiales
+
+                .filter((item) => {
+
+                  if (!busqueda) return false;
+
+                  return item.parte
+                    ?.toString()
+                    .toLowerCase()
+                    .includes(
+                      busqueda.toLowerCase()
+                    );
+
+                })
+
+                .map((item, index) => (
+
+                  <div
+                    key={index}
+                    style={{
+                      background: "white",
+                      padding: "20px",
+                      borderRadius: "15px",
+                      marginTop: "20px",
+                    }}
+                  >
+
+                    <h2>
+                      📦 {item.parte}
+                    </h2>
+
+                    <p>
+                      Modelo: {item.modelo}
+                    </p>
+
+                    <p>
+                      Organización: {item.org}
+                    </p>
+
+                  </div>
+
+                ))}
+
+            </div>
 
           </div>
 
-        ))}
+        )}
 
-    </div>
+        {/* VISOR IMAGEN */}
 
-  </div>
+        {imagenGrande && (
 
-)}
+          <div
 
-      {/* VISOR IMAGEN */}
-
-      {imagenGrande && (
-
-        <div
-
-          onClick={() =>
-            setImagenGrande(null)
-          }
-
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            background: "rgba(0,0,0,0.9)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 9999,
-          }}
-        >
-
-          <img
-            src={imagenGrande}
+            onClick={() =>
+              setImagenGrande(null)
+            }
 
             style={{
-              maxWidth: "90%",
-              maxHeight: "90%",
-              borderRadius: "20px",
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              background: "rgba(0,0,0,0.9)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              zIndex: 9999,
             }}
-          />
+          >
 
-        </div>
+            <img
+              src={imagenGrande}
 
-      )}
+              style={{
+                maxWidth: "90%",
+                maxHeight: "90%",
+                borderRadius: "20px",
+              }}
+            />
+
+          </div>
+
+        )}
+
+      </div>
 
     </div>
   );
