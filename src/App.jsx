@@ -97,9 +97,8 @@ function App() {
 
   ];
 
+  const PASSWORD_ADMIN = "Tijuana123456!";
   const [usuarioInput, setUsuarioInput] = useState("");
-  const [passwordInput, setPasswordInput] = useState("");
-
   const [logueado, setLogueado] = useState(false);
 
   const [usuarioActual, setUsuarioActual] = useState(null);
@@ -118,9 +117,25 @@ const [imagen2, setImagen2] = useState(null);
 const [imagen3, setImagen3] = useState(null);
 const [imagen4, setImagen4] = useState(null);
 
+const [imagenEdit1, setImagenEdit1] = useState(null);
+
+const [imagenEdit2, setImagenEdit2] = useState(null);
+
+const [imagenEdit3, setImagenEdit3] = useState(null);
+
+const [imagenEdit4, setImagenEdit4] = useState(null);
+
+const [imagenesActuales, setImagenesActuales] = useState([]);
+
   const [imagenGrande, setImagenGrande] = useState(null);
 
   const [materiales, setMateriales] = useState([]);
+
+  const [mostrarPassword, setMostrarPassword] = useState(false);
+
+const [passwordInput, setPasswordInput] = useState("");
+
+const [accionPendiente, setAccionPendiente] = useState(null);
 
   const [organizacionSeleccionada, setOrganizacionSeleccionada] = useState("");
   const [busqueda, setBusqueda] = useState("");
@@ -128,6 +143,7 @@ const [imagen4, setImagen4] = useState(null);
 
 const [parteEdit, setParteEdit] = useState("");
 const [modeloEdit, setModeloEdit] = useState("");
+const [descripcionEdit, setDescripcionEdit] = useState("");
 const [orgEdit, setOrgEdit] = useState("");
 
   useEffect(() => {
@@ -220,9 +236,26 @@ const [orgEdit, setOrgEdit] = useState("");
 
   await updateDoc(ref, {
 
-    parte: parteEdit,
-    modelo: modeloEdit,
-    org: orgEdit,
+   parte: parteEdit,
+modelo: modeloEdit,
+descripcion: descripcionEdit,
+org: orgEdit,
+
+imagenes: [
+
+  imagenEdit1 || imagenesActuales[0],
+
+  imagenEdit2 || imagenesActuales[1],
+
+  imagenEdit3 || imagenesActuales[2],
+
+  imagenEdit4 || imagenesActuales[3],
+
+].filter(
+  (img) =>
+    typeof img === "string" &&
+    img.trim() !== ""
+),
 
   });
 
@@ -234,9 +267,10 @@ const [orgEdit, setOrgEdit] = useState("");
 
         ? {
             ...item,
-            parte: parteEdit,
-            modelo: modeloEdit,
-            org: orgEdit,
+           parte: parteEdit,
+modelo: modeloEdit,
+descripcion: descripcionEdit,
+org: orgEdit,
           }
 
         : item
@@ -244,6 +278,7 @@ const [orgEdit, setOrgEdit] = useState("");
     )
 
   );
+
 
   setEditandoId(null);
 
@@ -828,7 +863,7 @@ setOrg("");
               }}
             >
 
-              {["SHTV", "SOTV", "SPTV", "FBC0", "FBC1", "EV03"].map((orgItem) => (
+              {["TODOS", "SHTV", "SOTV", "SPTV", "FBC0", "FBC1", "EV03"].map((orgItem) => (
 
                <button
   key={orgItem}
@@ -885,22 +920,30 @@ setOrg("");
 
                 {materiales
 
-                  .filter((item) => {
+                .filter((item) => {
 
-                    if (!item.org) return false;
+  if (!item) return false;
 
-                    return (
-                      item.org
-                        .toString()
-                        .trim()
-                        .toUpperCase() ===
-                      organizacionSeleccionada
-                        .toString()
-                        .trim()
-                        .toUpperCase()
-                    );
+  if (
+    organizacionSeleccionada === "TODOS"
+  ) {
+    return true;
+  }
 
-                  })
+  if (!item.org) return false;
+
+  return (
+    item.org
+      .toString()
+      .trim()
+      .toUpperCase() ===
+    organizacionSeleccionada
+      .toString()
+      .trim()
+      .toUpperCase()
+  );
+
+})
 
                   .map((item, index) => (
 
@@ -949,15 +992,47 @@ setOrg("");
 
                          <button
 
-  onClick={() => {
+onClick={() => {
+
+  setAccionPendiente(() => () => {
+
+    setImagenesActuales(
+      item.imagenes || []
+    );
 
     setEditandoId(item.id);
 
+    setDescripcionEdit(
+      item.descripcion || ""
+    );
+
     setParteEdit(item.parte);
+
     setModeloEdit(item.modelo);
+
     setOrgEdit(item.org);
 
-  }}
+    setImagenEdit1(
+      item.imagenes?.[0] || null
+    );
+
+    setImagenEdit2(
+      item.imagenes?.[1] || null
+    );
+
+    setImagenEdit3(
+      item.imagenes?.[2] || null
+    );
+
+    setImagenEdit4(
+      item.imagenes?.[3] || null
+    );
+
+  });
+
+  setMostrarPassword(true);
+
+}}
 
   style={{
     width: "100%",
@@ -972,10 +1047,17 @@ setOrg("");
 </button>
 
 <button
-                            onClick={() =>
-                              borrarMaterial(item.id)
-                            }
+                           onClick={() => {
 
+ setAccionPendiente(() => () => {
+
+  borrarMaterial(item.id);
+
+});
+
+setMostrarPassword(true);
+
+}}
                             style={{
                               width: "100%",
                               padding: "10px",
@@ -999,12 +1081,18 @@ setOrg("");
                         📦 {item.parte}
                       </h3>
 
+                      <p>
+  ID: {item.id}
+</p>
+
            <p>
-  Modelo: {item.modelo}
+  Modelo: {item.modelo || "Sin modelo"}
 </p>
 
 <p>
-  Descripción: {item.descripcion}
+  Descripción: {
+    item.descripcion || "Sin descripción"
+  }
 </p>
 
 <p>
@@ -1020,6 +1108,8 @@ setOrg("");
       borderRadius: "15px",
     }}
   >
+
+
 
     <input
       value={parteEdit}
@@ -1038,6 +1128,105 @@ setOrg("");
       placeholder="Modelo"
       style={inputStyle}
     />
+
+
+<input
+  placeholder="Descripción"
+
+  value={descripcionEdit || ""}
+
+  onChange={(e) =>
+    setDescripcionEdit(e.target.value)
+  }
+
+  style={{
+    width: "100%",
+    padding: "10px",
+    marginTop: "10px",
+    borderRadius: "8px",
+    border: "1px solid #ccc",
+  }}
+/>
+
+<p style={{ marginTop: "15px" }}>
+  Cambiar imágenes
+</p>
+
+<input
+  type="file"
+  accept="image/*"
+
+  onChange={(e) => {
+
+    const file = e.target.files[0];
+
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      setImagenEdit1(reader.result);
+    };
+
+    reader.readAsDataURL(file);
+
+  }}
+/>
+
+<input
+  type="file"
+  accept="image/*"
+
+  onChange={(e) => {
+
+    const file = e.target.files[0];
+
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      setImagenEdit2(reader.result);
+    };
+
+    reader.readAsDataURL(file);
+
+  }}
+/>
+
+<input
+  type="file"
+  accept="image/*"
+
+  onChange={(e) => {
+
+    const file = e.target.files[0];
+
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      setImagenEdit3(reader.result);
+    };
+
+    reader.readAsDataURL(file);
+
+  }}
+/>
+
+<input
+  type="file"
+  accept="image/*"
+
+  onChange={(e) => {
+
+    const file = e.target.files[0];
+
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      setImagenEdit4(reader.result);
+    };
+
+    reader.readAsDataURL(file);
+
+  }}
+/>
 
     <input
       value={orgEdit}
@@ -1197,22 +1386,47 @@ setOrg("");
               }}
             >
 
-              {materiales
+{materiales
 
-                .filter((item) => {
+  .filter((item) => {
 
-                  if (!busqueda) return false;
+    if (!item) return false;
 
-                  return item.parte
-                    ?.toString()
-                    .toLowerCase()
-                    .includes(
-                      busqueda.toLowerCase()
-                    );
+    const textoBusqueda =
+      busqueda.toLowerCase();
 
-                })
+    const parte =
+      item.parte
+        ?.toString()
+        .toLowerCase() || "";
 
-                .map((item, index) => (
+    const modelo =
+      item.modelo
+        ?.toString()
+        .toLowerCase() || "";
+
+    const descripcion =
+      item.descripcion
+        ?.toString()
+        .toLowerCase() || "";
+
+    return (
+
+      parte.includes(textoBusqueda)
+
+      ||
+
+      modelo.includes(textoBusqueda)
+
+      ||
+
+      descripcion.includes(textoBusqueda)
+
+    );
+
+  })
+
+  .map((item, index) => (
 
                   <div
                     key={index}
@@ -1228,13 +1442,85 @@ setOrg("");
                       📦 {item.parte}
                     </h2>
 
+<p>
+  ID: {item.id}
+</p>
+
                     <p>
                       Modelo: {item.modelo}
                     </p>
 
+<p>
+  Descripción: {
+    item.descripcion || "Sin descripción"
+  }
+</p>
+
                     <p>
                       Organización: {item.org}
                     </p>
+
+<div
+  style={{
+    display: "flex",
+    gap: "10px",
+    marginTop: "15px",
+    flexWrap: "wrap",
+  }}
+>
+
+  {(
+
+    Array.isArray(item.imagenes)
+
+      ? item.imagenes
+
+      : [
+          item.img1,
+          item.img2,
+          item.img3,
+          item.img4,
+        ]
+
+  )
+
+    .filter(
+      (img) =>
+        typeof img === "string" &&
+        img.trim() !== ""
+    )
+
+    .map((img, index) => (
+
+      <img
+        key={index}
+
+        src={
+          img.startsWith("data:image")
+            ? img
+            : `data:image/jpeg;base64,${img}`
+        }
+
+        onClick={() =>
+          setImagenGrande(
+            img.startsWith("data:image")
+              ? img
+              : `data:image/jpeg;base64,${img}`
+          )
+        }
+
+        style={{
+          width: "120px",
+          height: "120px",
+          objectFit: "cover",
+          borderRadius: "12px",
+          cursor: "pointer",
+        }}
+      />
+
+    ))}
+
+</div>
 
                   </div>
 
@@ -1284,6 +1570,129 @@ setOrg("");
 
         )}
 
+{mostrarPassword && (
+
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      background: "rgba(0,0,0,0.6)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 9999,
+    }}
+  >
+
+    <div
+      style={{
+        background: "white",
+        padding: "30px",
+        borderRadius: "20px",
+        width: "350px",
+      }}
+    >
+
+      <h2>
+        🔒 Acceso administrador
+      </h2>
+
+      <p>
+        Ingrese contraseña
+      </p>
+
+      <input
+        type="password"
+
+        value={passwordInput}
+
+        onChange={(e) =>
+          setPasswordInput(e.target.value)
+        }
+
+        style={{
+          width: "100%",
+          padding: "12px",
+          borderRadius: "10px",
+          border: "1px solid #ccc",
+          marginTop: "10px",
+        }}
+      />
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginTop: "20px",
+        }}
+      >
+
+        <button
+
+          onClick={() => {
+
+            setMostrarPassword(false);
+
+            setPasswordInput("");
+
+          }}
+
+          style={{
+            padding: "10px 20px",
+            border: "none",
+            borderRadius: "10px",
+            cursor: "pointer",
+          }}
+        >
+          Cancelar
+        </button>
+
+        <button
+
+          onClick={() => {
+
+            if (
+              passwordInput !== PASSWORD_ADMIN
+            ) {
+
+              alert(
+                "Contraseña incorrecta"
+              );
+
+              return;
+
+            }
+
+            accionPendiente?.();
+
+            setMostrarPassword(false);
+
+            setPasswordInput("");
+
+          }}
+
+          style={{
+            padding: "10px 20px",
+            border: "none",
+            borderRadius: "10px",
+            background: "#2563eb",
+            color: "white",
+            cursor: "pointer",
+          }}
+        >
+          Entrar
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+)}
       </div>
 
     </div>
