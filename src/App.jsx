@@ -1296,19 +1296,10 @@ setMostrarPassword(true);
 
       <img
         key={index}
-
-        src={
-          img.startsWith("data:image")
-            ? img
-            : `data:image/jpeg;base64,${img}`
-        }
+src={img}
 
         onClick={() =>
-          setImagenGrande(
-            img.startsWith("data:image")
-              ? img
-              : `data:image/jpeg;base64,${img}`
-          )
+          setImagenGrande(img)
         }
 
         style={{
@@ -1495,18 +1486,10 @@ setMostrarPassword(true);
       <img
         key={index}
 
-        src={
-          img.startsWith("data:image")
-            ? img
-            : `data:image/jpeg;base64,${img}`
-        }
+        src={img}
 
         onClick={() =>
-          setImagenGrande(
-            img.startsWith("data:image")
-              ? img
-              : `data:image/jpeg;base64,${img}`
-          )
+          setImagenGrande( img)
         }
 
         style={{
