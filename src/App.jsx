@@ -13,6 +13,28 @@ import { useState, useEffect } from "react";
 
 function App() {
 
+const thStyle = {
+
+  border: "1px solid #ddd",
+
+  padding: "15px",
+
+  fontSize: "16px",
+
+  whiteSpace: "nowrap",
+
+};
+
+const tdStyle = {
+
+  border: "1px solid #ddd",
+
+  padding: "15px",
+
+  fontSize: "16px",
+
+};
+
   // 🔐 LOGIN
 
   const usuariosSistema = [
@@ -104,6 +126,32 @@ function App() {
   const [usuarioActual, setUsuarioActual] = useState(null);
 
   // 🔥 SISTEMA
+
+const [mostrarManual, setMostrarManual] =
+useState(false);
+
+const [mostrarManualJaula1,
+setMostrarManualJaula1] =
+useState(false);
+
+const [mostrarManualJaula2,
+setMostrarManualJaula2] =
+useState(false);
+
+const [orgManual, setOrgManual] =
+useState("");
+
+const [idMaterialManual, setIdMaterialManual] =
+useState("");
+
+const [parteManual, setParteManual] =
+useState("");
+
+const [cantidadManual, setCantidadManual] =
+useState("");
+
+const [empleadoManual, setEmpleadoManual] =
+useState("");
 
   const [pantalla, setPantalla] = useState("inicio");
 
@@ -528,19 +576,11 @@ org: orgEdit,
 
           <div>
 
-            <h1
-              style={{
-                fontSize: "50px",
-              }}
-            >
-              Dashboard de Materiales
-            </h1>
-
             <div
               style={{
                 display: "flex",
                 gap: "20px",
-                marginTop: "30px",
+               marginTop: "10px", 
               }}
             >
 
@@ -567,20 +607,6 @@ org: orgEdit,
                 <h1>{usuariosSistema.length}</h1>
                 <p>Usuarios</p>
               </div>
-              
-
-
-
-
-
-
-
-
-
-
-
-
-
 
                             <div
                 style={{
@@ -594,9 +620,263 @@ org: orgEdit,
                 <p>Organizaciones</p>
               </div>
 
+
+
             </div>
 
+
+<div
+  style={{
+    display: "flex",
+    gap: "30px",
+    marginTop: "40px",
+    flexWrap: "nowrap",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  }}
+>
+
+  {/* GRAFICA */}
+
+  <div
+    style={{
+      background: "white",
+      borderRadius: "25px",
+      padding: "30px",
+      width: "500px",
+      minHeight: "400px",
+    }}
+  >
+
+    <h2
+      style={{
+        marginBottom: "30px",
+      }}
+    >
+      Materiales
+    </h2>
+
+    <div
+      style={{
+        display: "flex",
+        alignItems: "end",
+        justifyContent: "space-around",
+        height: "250px",
+        marginTop: "40px",
+      }}
+    >
+
+      <div
+        style={{
+          textAlign: "center",
+        }}
+      >
+
+        <div
+          style={{
+            width: "60px",
+            height: "120px",
+            background:
+              "linear-gradient(#b56cff,#6d28d9)",
+            borderRadius: "10px",
+          }}
+        />
+
+        <p>Materiales</p>
+
+      </div>
+
+      <div
+        style={{
+          textAlign: "center",
+        }}
+      >
+
+        <div
+          style={{
+            width: "60px",
+            height: "170px",
+            background:
+              "linear-gradient(#c084fc,#7c3aed)",
+            borderRadius: "10px",
+          }}
+        />
+
+        <p>FH20</p>
+
+      </div>
+
+      <div
+        style={{
+          textAlign: "center",
+        }}
+      >
+
+        <div
+          style={{
+            width: "60px",
+            height: "80px",
+            background:
+              "linear-gradient(#ddd6fe,#a855f7)",
+            borderRadius: "10px",
+          }}
+        />
+
+        <p>Jaula 1</p>
+
+      </div>
+
+      <div
+        style={{
+          textAlign: "center",
+        }}
+      >
+
+        <div
+          style={{
+            width: "60px",
+            height: "200px",
+            background:
+              "linear-gradient(#7e22ce,#4c1d95)",
+            borderRadius: "10px",
+          }}
+        />
+
+        <p>Jaula 2</p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  {/* CATEGORIAS */}
+
+  <div
+    style={{
+      background: "white",
+      borderRadius: "25px",
+      padding: "30px",
+      width: "500px",
+      minHeight: "400px",
+    }}
+  >
+
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
+
+      <h2>
+        Categorías
+      </h2>
+
+      <p
+        style={{
+          color: "#7c3aed",
+          cursor: "pointer",
+        }}
+      >
+        VER TODO
+      </p>
+
+    </div>
+
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns:
+          "repeat(3,1fr)",
+        gap: "20px",
+        marginTop: "30px",
+      }}
+    >
+
+      {[
+
+        "FS10 A FH20",
+
+        "Jaula 1",
+
+        "Jaula 2",
+
+
+      ].map((cat,index) => (
+
+      <div
+  key={index}
+
+  onClick={() => {
+
+   if(cat === "FS10 A FH20") {
+
+  setPantalla("fs10");
+
+}
+
+if(cat === "Jaula 1") {
+
+  setPantalla("jaula1");
+
+}
+
+if(cat === "Jaula 2") {
+
+  setPantalla("jaula2");
+
+}
+  }}
+
+  style={{
+    background: "#f3e8ff",
+    borderRadius: "20px",
+    padding: "25px",
+    textAlign: "center",
+    cursor: "pointer",
+  }}
+>
+
+          <div
+            style={{
+              fontSize: "40px",
+              marginBottom: "10px",
+            }}
+          >
+
+            {index === 0 && "📦"}
+
+            {index === 1 && "⛓️"}
+
+            {index === 2 && "⛓️"}
+
+
           </div>
+
+          <p
+            style={{
+              fontWeight: "bold",
+            }}
+          >
+            {cat}
+          </p>
+
+        </div>
+
+      ))}
+
+    </div>
+
+  </div>
+
+</div>
+
+
+          </div>
+
+
 
         )}
 
@@ -1514,6 +1794,1177 @@ src={img}
           </div>
 
         )}
+
+        {/* FS10 */}
+
+{pantalla === "fs10" && (
+
+ <div
+  style={{
+    width: "95%",
+    padding: "30px",
+    boxSizing: "border-box",
+    overflowX: "hidden",
+  }}
+>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
+
+      <div>
+
+        <h1
+          style={{
+            fontSize: "50px",
+          }}
+        >
+          Producto FS10 A FH20
+        </h1>
+
+        <p
+          style={{
+            fontSize: "25px",
+            color: "#555",
+          }}
+        >
+          Buscar y administrar inventario
+        </p>
+
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+          gap: "20px",
+        }}
+      >
+
+        <button
+          style={{
+            padding: "20px 40px",
+            borderRadius: "10px",
+            border: "2px solid #2563eb",
+            background: "white",
+            color: "#2563eb",
+            fontSize: "20px",
+            cursor: "pointer",
+          }}
+        >
+          Escanear
+        </button>
+
+      <button
+
+  onClick={() =>
+    setMostrarManual(true)
+  }
+
+  style={{
+    padding: "20px 40px",
+    borderRadius: "10px",
+    border: "2px solid red",
+    background: "white",
+    color: "red",
+    fontSize: "20px",
+    cursor: "pointer",
+  }}
+>
+  Manual
+</button>
+
+      </div>
+
+    </div>
+
+    <input
+      placeholder="🔎 Buscar material"
+
+      style={{
+        marginTop: "40px",
+        padding: "25px",
+        borderRadius: "10px",
+        border: "2px solid #2563eb",
+        fontSize: "22px",
+      }}
+    />
+
+    <h2
+      style={{
+        marginTop: "40px",
+      }}
+    >
+      Total Items Scanned: 13
+    </h2>
+
+ <table
+  style={{
+    width: "100%",
+    borderCollapse: "collapse",
+    background: "white",
+    tableLayout: "auto",
+  }}
+>
+
+      <thead>
+
+        <tr>
+
+          <th   style={{
+    ...thStyle,
+   
+  }}
+>
+            Organización
+          </th>
+
+<th   style={{
+    ...thStyle,
+   
+    
+  }}
+>
+  ID Material
+</th>
+
+         <th
+  style={{
+    ...thStyle,
+   
+  }}
+>
+  Número de parte
+</th>
+
+          <th   style={{
+    ...thStyle,
+  
+  }}
+>
+            Cantidad
+          </th>
+
+          <th   style={{
+    ...thStyle,
+   
+  }}
+>
+            Num.Empleado
+          </th>
+
+          <th   style={{
+    ...thStyle,
+    
+  }}
+>
+            Editar
+          </th>
+
+          <th   style={{
+    ...thStyle,
+    
+  }}
+>
+            Remove
+          </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        <tr>
+
+          <td   style={{
+    ...tdStyle,
+  }}
+>
+            SOTV
+          </td>
+
+<td   style={{
+    ...tdStyle,
+  }}
+>
+  MAT-0001
+</td>
+
+         <td
+  style={{
+    ...tdStyle,
+  }}
+>
+  3-0541-2597-01
+</td>
+
+          <td   style={{
+    ...tdStyle,
+  }}
+>
+            250
+          </td>
+
+          <td   style={{
+    ...tdStyle,
+  }}
+>
+            1023
+          </td>
+
+          <td   style={{
+    ...tdStyle,
+  }}
+>
+            ✏️
+          </td>
+
+          <td   style={{
+    ...tdStyle,
+  }}
+>
+            🗑️
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+)}
+{pantalla === "jaula1" && (
+
+ <div
+  style={{
+    width: "95%",
+    padding: "30px",
+    boxSizing: "border-box",
+    overflowX: "hidden",
+  }}
+>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
+
+      <div>
+
+        <h1
+          style={{
+            fontSize: "50px",
+          }}
+        >
+          Producto Jaula 1
+        </h1>
+
+        <p
+          style={{
+            fontSize: "25px",
+            color: "#555",
+          }}
+        >
+          Buscar y administrar inventario
+        </p>
+
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+          gap: "20px",
+        }}
+      >
+
+        <button
+          style={{
+            padding: "20px 40px",
+            borderRadius: "10px",
+            border: "2px solid #2563eb",
+            background: "white",
+            color: "#2563eb",
+            fontSize: "20px",
+            cursor: "pointer",
+          }}
+        >
+          Escanear
+        </button>
+
+        <button
+
+  onClick={() =>
+   setMostrarManualJaula1(true)
+  }
+
+  style={{
+    padding: "20px 40px",
+    borderRadius: "10px",
+    border: "2px solid red",
+    background: "white",
+    color: "red",
+    fontSize: "20px",
+    cursor: "pointer",
+  }}
+>
+  Manual
+</button>
+
+      </div>
+
+    </div>
+
+    <input
+      placeholder="🔎 Buscar material"
+
+      style={{
+        marginTop: "40px",
+        padding: "25px",
+        borderRadius: "10px",
+        border: "2px solid #2563eb",
+        fontSize: "22px",
+      }}
+    />
+
+    <h2
+      style={{
+        marginTop: "40px",
+      }}
+    >
+      Total Items Scanned: 13
+    </h2>
+
+ <table
+  style={{
+    width: "100%",
+    borderCollapse: "collapse",
+    background: "white",
+    tableLayout: "auto",
+  }}
+>
+
+      <thead>
+
+        <tr>
+
+          <th   style={{
+    ...thStyle,
+   
+  }}
+>
+            Organización
+          </th>
+
+<th   style={{
+    ...thStyle,
+   
+    
+  }}
+>
+  ID Material
+</th>
+
+         <th
+  style={{
+    ...thStyle,
+   
+  }}
+>
+  Número de parte
+</th>
+
+          <th   style={{
+    ...thStyle,
+  
+  }}
+>
+            Cantidad
+          </th>
+
+          <th   style={{
+    ...thStyle,
+   
+  }}
+>
+            Num.Empleado
+          </th>
+
+          <th   style={{
+    ...thStyle,
+    
+  }}
+>
+            Editar
+          </th>
+
+          <th   style={{
+    ...thStyle,
+    
+  }}
+>
+            Remove
+          </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        <tr>
+
+          <td   style={{
+    ...tdStyle,
+  }}
+>
+            SOTV
+          </td>
+
+<td   style={{
+    ...tdStyle,
+  }}
+>
+  MAT-0001
+</td>
+
+         <td
+  style={{
+    ...tdStyle,
+  }}
+>
+  3-0541-2597-01
+</td>
+
+          <td   style={{
+    ...tdStyle,
+  }}
+>
+            250
+          </td>
+
+          <td   style={{
+    ...tdStyle,
+  }}
+>
+            1023
+          </td>
+
+          <td   style={{
+    ...tdStyle,
+  }}
+>
+            ✏️
+          </td>
+
+          <td   style={{
+    ...tdStyle,
+  }}
+>
+            🗑️
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+)}
+
+{pantalla === "jaula2" && (
+
+ <div
+  style={{
+    width: "95%",
+    padding: "30px",
+    boxSizing: "border-box",
+    overflowX: "hidden",
+  }}
+>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
+
+      <div>
+
+        <h1
+          style={{
+            fontSize: "50px",
+          }}
+        >
+          Producto Jaula 2
+        </h1>
+
+        <p
+          style={{
+            fontSize: "25px",
+            color: "#555",
+          }}
+        >
+          Buscar y administrar inventario
+        </p>
+
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+          gap: "20px",
+        }}
+      >
+
+        <button
+          style={{
+            padding: "20px 40px",
+            borderRadius: "10px",
+            border: "2px solid #2563eb",
+            background: "white",
+            color: "#2563eb",
+            fontSize: "20px",
+            cursor: "pointer",
+          }}
+        >
+          Escanear
+        </button>
+
+      <button
+
+  onClick={() =>
+   setMostrarManualJaula2(true)
+  }
+
+  style={{
+    padding: "20px 40px",
+    borderRadius: "10px",
+    border: "2px solid red",
+    background: "white",
+    color: "red",
+    fontSize: "20px",
+    cursor: "pointer",
+  }}
+>
+  Manual
+</button>
+
+      </div>
+
+    </div>
+
+    <input
+      placeholder="🔎 Buscar material"
+
+      style={{
+        marginTop: "40px",
+        padding: "25px",
+        borderRadius: "10px",
+        border: "2px solid #2563eb",
+        fontSize: "22px",
+      }}
+    />
+
+    <h2
+      style={{
+        marginTop: "40px",
+      }}
+    >
+      Total Items Scanned: 13
+    </h2>
+
+ <table
+  style={{
+    width: "100%",
+    borderCollapse: "collapse",
+    background: "white",
+    tableLayout: "auto",
+  }}
+>
+
+      <thead>
+
+        <tr>
+
+          <th   style={{
+    ...thStyle,
+   
+  }}
+>
+            Organización
+          </th>
+
+<th   style={{
+    ...thStyle,
+   
+    
+  }}
+>
+  ID Material
+</th>
+
+         <th
+  style={{
+    ...thStyle,
+   
+  }}
+>
+  Número de parte
+</th>
+
+          <th   style={{
+    ...thStyle,
+  
+  }}
+>
+            Cantidad
+          </th>
+
+          <th   style={{
+    ...thStyle,
+   
+  }}
+>
+            Num.Empleado
+          </th>
+
+          <th   style={{
+    ...thStyle,
+    
+  }}
+>
+            Editar
+          </th>
+
+          <th   style={{
+    ...thStyle,
+    
+  }}
+>
+            Remove
+          </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        <tr>
+
+          <td   style={{
+    ...tdStyle,
+  }}
+>
+            SOTV
+          </td>
+
+<td   style={{
+    ...tdStyle,
+  }}
+>
+  MAT-0001
+</td>
+
+         <td
+  style={{
+    ...tdStyle,
+  }}
+>
+  3-0541-2597-01
+</td>
+
+          <td   style={{
+    ...tdStyle,
+  }}
+>
+            250
+          </td>
+
+          <td   style={{
+    ...tdStyle,
+  }}
+>
+            1023
+          </td>
+
+          <td   style={{
+    ...tdStyle,
+  }}
+>
+            ✏️
+          </td>
+
+          <td   style={{
+    ...tdStyle,
+  }}
+>
+            🗑️
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+)}
+
+{/* MODAL FS10 */}
+
+{mostrarManual && (
+
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      background: "rgba(0,0,0,0.5)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 9999,
+    }}
+  >
+
+    <div
+      style={{
+        width: "90%",
+maxWidth: "500px",
+        background: "white",
+        borderRadius: "20px",
+        padding: "30px",
+      }}
+    >
+
+      <h1>📦 Registro manual FS10</h1>
+
+      <input
+        placeholder="Organización"
+        value={orgManual}
+        onChange={(e) =>
+          setOrgManual(e.target.value)
+        }
+        style={{
+  ...inputStyle,
+  width: "100%",
+  boxSizing: "border-box",
+}}
+      />
+
+      <input
+        placeholder="Material identificación"
+        value={idMaterialManual}
+        onChange={(e) =>
+          setIdMaterialManual(
+            e.target.value
+          )
+        }
+        style={{
+  ...inputStyle,
+  width: "100%",
+  boxSizing: "border-box",
+}}
+      />
+
+      <input
+        placeholder="Número de parte"
+        value={parteManual}
+        onChange={(e) =>
+          setParteManual(
+            e.target.value
+          )
+        }
+       style={{
+  ...inputStyle,
+  width: "100%",
+  boxSizing: "border-box",
+}}
+      />
+
+      <input
+        placeholder="Cantidad"
+        value={cantidadManual}
+        onChange={(e) =>
+          setCantidadManual(
+            e.target.value
+          )
+        }
+        style={{
+  ...inputStyle,
+  width: "100%",
+  boxSizing: "border-box",
+}}
+      />
+
+      <input
+        placeholder="Num empleado"
+        value={empleadoManual}
+        onChange={(e) =>
+          setEmpleadoManual(
+            e.target.value
+          )
+        }
+       style={{
+  ...inputStyle,
+  width: "100%",
+  boxSizing: "border-box",
+}}
+      />
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginTop: "30px",
+        }}
+      >
+
+        <button
+          onClick={() =>
+            setMostrarManual(false)
+          }
+          style={{
+            padding: "15px 30px",
+            border: "none",
+            borderRadius: "10px",
+            background: "#ddd",
+            cursor: "pointer",
+          }}
+        >
+          Cancelar
+        </button>
+
+        <button
+          style={{
+            padding: "15px 30px",
+            border: "none",
+            borderRadius: "10px",
+            background: "#2563eb",
+            color: "white",
+            cursor: "pointer",
+          }}
+        >
+          Guardar
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+)}
+
+{/* MODAL JAULA 1 */}
+
+{mostrarManualJaula1 && (
+
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      background: "rgba(0,0,0,0.5)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 9999,
+    }}
+  >
+
+    <div
+      style={{
+        width: "90%",
+maxWidth: "500px",
+        background: "white",
+        borderRadius: "20px",
+        padding: "30px",
+      }}
+    >
+
+      <h1>📦 Registro manual Jaula 1</h1>
+
+      <input
+        placeholder="Organización"
+        value={orgManual}
+        onChange={(e) =>
+          setOrgManual(e.target.value)
+        }
+        style={{
+  ...inputStyle,
+  width: "100%",
+  boxSizing: "border-box",
+}}
+      />
+
+      <input
+        placeholder="Material identificación"
+        value={idMaterialManual}
+        onChange={(e) =>
+          setIdMaterialManual(
+            e.target.value
+          )
+        }
+        style={{
+  ...inputStyle,
+  width: "100%",
+  boxSizing: "border-box",
+}}
+      />
+
+      <input
+        placeholder="Número de parte"
+        value={parteManual}
+        onChange={(e) =>
+          setParteManual(
+            e.target.value
+          )
+        }
+        style={{
+  ...inputStyle,
+  width: "100%",
+  boxSizing: "border-box",
+}}
+      />
+
+      <input
+        placeholder="Cantidad"
+        value={cantidadManual}
+        onChange={(e) =>
+          setCantidadManual(
+            e.target.value
+          )
+        }
+        style={{
+  ...inputStyle,
+  width: "100%",
+  boxSizing: "border-box",
+}}
+      />
+
+      <input
+        placeholder="Num empleado"
+        value={empleadoManual}
+        onChange={(e) =>
+          setEmpleadoManual(
+            e.target.value
+          )
+        }
+        style={{
+  ...inputStyle,
+  width: "100%",
+  boxSizing: "border-box",
+}}
+      />
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginTop: "30px",
+        }}
+      >
+
+        <button
+          onClick={() =>
+            setMostrarManualJaula1(false)
+          }
+          style={{
+            padding: "15px 30px",
+            border: "none",
+            borderRadius: "10px",
+            background: "#ddd",
+            cursor: "pointer",
+          }}
+        >
+          Cancelar
+        </button>
+
+        <button
+          style={{
+            padding: "15px 30px",
+            border: "none",
+            borderRadius: "10px",
+            background: "#2563eb",
+            color: "white",
+            cursor: "pointer",
+          }}
+        >
+          Guardar
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+)}
+
+{/* MODAL JAULA 2 */}
+
+{mostrarManualJaula2 && (
+
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      background: "rgba(0,0,0,0.5)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 9999,
+    }}
+  >
+
+    <div
+      style={{
+        width: "90%",
+maxWidth: "500px",
+        background: "white",
+        borderRadius: "20px",
+        padding: "30px",
+      }}
+    >
+
+      <h1>📦 Registro manual Jaula 2</h1>
+
+      <input
+        placeholder="Organización"
+        value={orgManual}
+        onChange={(e) =>
+          setOrgManual(e.target.value)
+        }
+       style={{
+  ...inputStyle,
+  width: "100%",
+  boxSizing: "border-box",
+}}
+      />
+
+      <input
+        placeholder="Material identificación"
+        value={idMaterialManual}
+        onChange={(e) =>
+          setIdMaterialManual(
+            e.target.value
+          )
+        }
+       style={{
+  ...inputStyle,
+  width: "100%",
+  boxSizing: "border-box",
+}}
+      />
+
+      <input
+        placeholder="Número de parte"
+        value={parteManual}
+        onChange={(e) =>
+          setParteManual(
+            e.target.value
+          )
+        }
+        style={{
+  ...inputStyle,
+  width: "100%",
+  boxSizing: "border-box",
+}}
+      />
+
+      <input
+        placeholder="Cantidad"
+        value={cantidadManual}
+        onChange={(e) =>
+          setCantidadManual(
+            e.target.value
+          )
+        }
+        style={{
+  ...inputStyle,
+  width: "100%",
+  boxSizing: "border-box",
+}}
+      />
+
+      <input
+        placeholder="Num empleado"
+        value={empleadoManual}
+        onChange={(e) =>
+          setEmpleadoManual(
+            e.target.value
+          )
+        }
+        style={{
+  ...inputStyle,
+  width: "100%",
+  boxSizing: "border-box",
+}}
+      />
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginTop: "30px",
+        }}
+      >
+
+        <button
+          onClick={() =>
+            setMostrarManualJaula2(false)
+          }
+          style={{
+            padding: "15px 30px",
+            border: "none",
+            borderRadius: "10px",
+            background: "#ddd",
+            cursor: "pointer",
+          }}
+        >
+          Cancelar
+        </button>
+
+        <button
+          style={{
+            padding: "15px 30px",
+            border: "none",
+            borderRadius: "10px",
+            background: "#2563eb",
+            color: "white",
+            cursor: "pointer",
+          }}
+        >
+          Guardar
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+)}
 
         {/* VISOR IMAGEN */}
 
