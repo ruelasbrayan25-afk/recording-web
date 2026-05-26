@@ -119,6 +119,18 @@ const tdStyle = {
 
   ];
 
+  const [mostrarPassword,
+setMostrarPassword] =
+useState(false);
+
+const [accionPendiente,
+setAccionPendiente] =
+useState(null);
+
+const [passwordAdmin,
+setPasswordAdmin] =
+useState("Foxconn123456!");
+
   const PASSWORD_ADMIN = "Tijuana123456!";
   const [usuarioInput, setUsuarioInput] = useState("");
   const [logueado, setLogueado] = useState(false);
@@ -129,6 +141,11 @@ const tdStyle = {
 
 const [mostrarManual, setMostrarManual] =
 useState(false);
+
+const [materialesFS10,
+setMaterialesFS10] =
+useState([
+]);
 
 const [mostrarManualJaula1,
 setMostrarManualJaula1] =
@@ -179,15 +196,35 @@ const [imagenesActuales, setImagenesActuales] = useState([]);
 
   const [materiales, setMateriales] = useState([]);
 
-  const [mostrarPassword, setMostrarPassword] = useState(false);
-
 const [passwordInput, setPasswordInput] = useState("");
-
-const [accionPendiente, setAccionPendiente] = useState(null);
 
   const [organizacionSeleccionada, setOrganizacionSeleccionada] = useState("");
   const [busqueda, setBusqueda] = useState("");
   const [editandoId, setEditandoId] = useState(null);
+
+  const [editandoFS10,
+setEditandoFS10] =
+useState(null);
+
+const [orgEditFS10,
+setOrgEditFS10] =
+useState("");
+
+const [idMaterialEditFS10,
+setIdMaterialEditFS10] =
+useState("");
+
+const [parteEditFS10,
+setParteEditFS10] =
+useState("");
+
+const [cantidadEditFS10,
+setCantidadEditFS10] =
+useState("");
+
+const [empleadoEditFS10,
+setEmpleadoEditFS10] =
+useState("");
 
 const [parteEdit, setParteEdit] = useState("");
 const [modeloEdit, setModeloEdit] = useState("");
@@ -213,6 +250,7 @@ const [orgEdit, setOrgEdit] = useState("");
 
       });
 
+     
       setMateriales(lista);
 
     };
@@ -229,7 +267,43 @@ const [orgEdit, setOrgEdit] = useState("");
 
   }, []);
 
-  const iniciarSesion = () => {
+useEffect(() => {
+
+  const cargarFS10 =
+  async () => {
+
+    const querySnapshot =
+      await getDocs(
+        collection(db, "fs10")
+      );
+
+    const lista = [];
+
+    querySnapshot.forEach(
+      (docu) => {
+
+        console.log(docu.data())
+
+        lista.push({
+
+          id: docu.id,
+
+          ...docu.data(),
+
+        });
+
+      }
+    );
+
+    setMaterialesFS10(lista);
+
+  };
+
+  cargarFS10();
+
+}, []);
+
+const iniciarSesion = () => {
 
     const usuarioEncontrado = usuariosSistema.find(
 
@@ -1795,249 +1869,539 @@ src={img}
 
         )}
 
-        {/* FS10 */}
+       {/* FS10 */}
 
 {pantalla === "fs10" && (
 
- <div
-  style={{
-    width: "95%",
-    padding: "30px",
-    boxSizing: "border-box",
-    overflowX: "hidden",
-  }}
+<div
+style={{
+width: "95%",
+padding: "30px",
+boxSizing: "border-box",
+overflowX: "hidden",
+}}
 >
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-      }}
-    >
 
-      <div>
-
-        <h1
-          style={{
-            fontSize: "50px",
-          }}
-        >
-          Producto FS10 A FH20
-        </h1>
-
-        <p
-          style={{
-            fontSize: "25px",
-            color: "#555",
-          }}
-        >
-          Buscar y administrar inventario
-        </p>
-
-      </div>
-
-      <div
-        style={{
-          display: "flex",
-          gap: "20px",
-        }}
-      >
-
-        <button
-          style={{
-            padding: "20px 40px",
-            borderRadius: "10px",
-            border: "2px solid #2563eb",
-            background: "white",
-            color: "#2563eb",
-            fontSize: "20px",
-            cursor: "pointer",
-          }}
-        >
-          Escanear
-        </button>
-
-      <button
-
-  onClick={() =>
-    setMostrarManual(true)
-  }
-
-  style={{
-    padding: "20px 40px",
-    borderRadius: "10px",
-    border: "2px solid red",
-    background: "white",
-    color: "red",
-    fontSize: "20px",
-    cursor: "pointer",
-  }}
+<div
+style={{
+display: "flex",
+justifyContent: "space-between",
+alignItems: "center",
+}}
 >
-  Manual
+
+<div>
+
+<h1
+style={{
+fontSize: "50px",
+}}
+>
+Producto FS10 A FH20
+</h1>
+
+<p
+style={{
+fontSize: "25px",
+color: "#555",
+}}
+>
+Buscar y administrar inventario
+</p>
+
+</div>
+
+<div
+style={{
+display: "flex",
+gap: "20px",
+}}
+>
+
+<button
+style={{
+padding: "20px 40px",
+borderRadius: "10px",
+border: "2px solid #2563eb",
+background: "white",
+color: "#2563eb",
+fontSize: "20px",
+cursor: "pointer",
+}}
+>
+Escanear
 </button>
 
-      </div>
+<button
 
-    </div>
+onClick={() =>
+setMostrarManual(true)
+}
 
-    <input
-      placeholder="🔎 Buscar material"
+style={{
+padding: "20px 40px",
+borderRadius: "10px",
+border: "2px solid red",
+background: "white",
+color: "red",
+fontSize: "20px",
+cursor: "pointer",
+}}
+>
+Manual
+</button>
 
-      style={{
-        marginTop: "40px",
-        padding: "25px",
-        borderRadius: "10px",
-        border: "2px solid #2563eb",
-        fontSize: "22px",
-      }}
-    />
+</div>
 
-    <h2
-      style={{
-        marginTop: "40px",
-      }}
-    >
-      Total Items Scanned: 13
-    </h2>
+</div>
 
- <table
-  style={{
-    width: "100%",
-    borderCollapse: "collapse",
-    background: "white",
-    tableLayout: "auto",
-  }}
+<input
+placeholder="🔎 Buscar material"
+
+style={{
+marginTop: "40px",
+padding: "25px",
+borderRadius: "10px",
+border: "2px solid #2563eb",
+fontSize: "22px",
+}}
+/>
+
+<h2
+style={{
+marginTop: "40px",
+}}
+>
+Total Items Scanned: {materialesFS10.length}
+</h2>
+
+<table
+style={{
+width: "100%",
+borderCollapse: "collapse",
+background: "white",
+tableLayout: "auto",
+}}
 >
 
-      <thead>
+<thead>
 
-        <tr>
+<tr>
 
-          <th   style={{
-    ...thStyle,
-   
-  }}
->
-            Organización
-          </th>
-
-<th   style={{
-    ...thStyle,
-   
-    
-  }}
->
-  ID Material
+<th style={thStyle}>
+Organización
 </th>
 
-         <th
-  style={{
-    ...thStyle,
-   
-  }}
->
-  Número de parte
+<th style={thStyle}>
+ID Material
 </th>
 
-          <th   style={{
-    ...thStyle,
-  
-  }}
->
-            Cantidad
-          </th>
+<th style={thStyle}>
+Número de parte
+</th>
 
-          <th   style={{
-    ...thStyle,
-   
-  }}
->
-            Num.Empleado
-          </th>
+<th style={thStyle}>
+Cantidad
+</th>
 
-          <th   style={{
-    ...thStyle,
-    
-  }}
->
-            Editar
-          </th>
+<th style={thStyle}>
+Num.Empleado
+</th>
 
-          <th   style={{
-    ...thStyle,
-    
-  }}
->
-            Remove
-          </th>
+<th style={thStyle}>
+Editar
+</th>
 
-        </tr>
+<th style={thStyle}>
+Remove
+</th>
 
-      </thead>
+</tr>
 
-      <tbody>
+</thead>
 
-        <tr>
+<tbody>
 
-          <td   style={{
-    ...tdStyle,
-  }}
->
-            SOTV
-          </td>
+{materialesFS10.map(
+(item, index) => (
 
-<td   style={{
-    ...tdStyle,
-  }}
->
-  MAT-0001
+<tr key={index}>
+
+<td style={tdStyle}>
+{item.organizacion}
 </td>
 
-         <td
-  style={{
-    ...tdStyle,
-  }}
->
-  3-0541-2597-01
+<td style={tdStyle}>
+{item.idMaterial}
 </td>
 
-          <td   style={{
-    ...tdStyle,
-  }}
+<td style={tdStyle}>
+{item.parte}
+</td>
+
+<td style={tdStyle}>
+{item.cantidad}
+</td>
+
+<td style={tdStyle}>
+{item.empleado}
+</td>
+
+<td style={tdStyle}>
+
+<button
+
+onClick={() => {
+
+const pass = prompt(
+"Ingrese contraseña"
+);
+
+if (
+pass !== PASSWORD_ADMIN
+) {
+
+alert(
+"Contraseña incorrecta"
+);
+
+return;
+
+}
+
+setEditandoFS10(
+item.id
+);
+
+setOrgEditFS10(
+item.organizacion
+);
+
+setIdMaterialEditFS10(
+item.idMaterial
+);
+
+setParteEditFS10(
+item.parte
+);
+
+setCantidadEditFS10(
+item.cantidad
+);
+
+setEmpleadoEditFS10(
+item.empleado
+);
+
+}}
+
+style={{
+border: "none",
+background: "transparent",
+cursor: "pointer",
+fontSize: "20px",
+}}
+
 >
-            250
-          </td>
 
-          <td   style={{
-    ...tdStyle,
-  }}
+✏️
+
+</button>
+
+</td>
+
+<td style={tdStyle}>
+
+<button
+
+onClick={async () => {
+
+const pass = prompt(
+"Ingrese contraseña"
+);
+
+if (
+pass !== PASSWORD_ADMIN
+) {
+
+alert(
+"Contraseña incorrecta"
+);
+
+return;
+
+}
+
+const confirmar =
+window.confirm(
+"¿Eliminar material?"
+);
+
+if (!confirmar)
+return;
+
+await deleteDoc(
+doc(db, "fs10", item.id)
+);
+
+setMaterialesFS10(
+
+materialesFS10.filter(
+(mat) =>
+mat.id !== item.id
+)
+
+);
+
+}}
+
+style={{
+border: "none",
+background: "transparent",
+cursor: "pointer",
+fontSize: "20px",
+}}
+
 >
-            1023
-          </td>
 
-          <td   style={{
-    ...tdStyle,
-  }}
+🗑️
+
+</button>
+
+</td>
+
+</tr>
+
+)
+)}
+
+</tbody>
+
+</table>
+
+{editandoFS10 && (
+
+<div
+style={{
+position: "fixed",
+top: 0,
+left: 0,
+width: "100%",
+height: "100%",
+background:
+"rgba(0,0,0,0.5)",
+display: "flex",
+justifyContent:
+"center",
+alignItems: "center",
+zIndex: 9999,
+}}
 >
-            ✏️
-          </td>
 
-          <td   style={{
-    ...tdStyle,
-  }}
+<div
+style={{
+background: "white",
+padding: "30px",
+borderRadius: "20px",
+width: "500px",
+display: "flex",
+flexDirection:
+"column",
+gap: "15px",
+}}
 >
-            🗑️
-          </td>
 
-        </tr>
+<h2>
+Editar material
+</h2>
 
-      </tbody>
+<input
+value={orgEditFS10}
+onChange={(e) =>
+setOrgEditFS10(
+e.target.value
+)
+}
+placeholder="Organización"
+style={inputStyle}
+/>
 
-    </table>
+<input
+value={idMaterialEditFS10}
+onChange={(e) =>
+setIdMaterialEditFS10(
+e.target.value
+)
+}
+placeholder="ID Material"
+style={inputStyle}
+/>
 
-  </div>
+<input
+value={parteEditFS10}
+onChange={(e) =>
+setParteEditFS10(
+e.target.value
+)
+}
+placeholder="Parte"
+style={inputStyle}
+/>
+
+<input
+value={cantidadEditFS10}
+onChange={(e) =>
+setCantidadEditFS10(
+e.target.value
+)
+}
+placeholder="Cantidad"
+style={inputStyle}
+/>
+
+<input
+value={empleadoEditFS10}
+onChange={(e) =>
+setEmpleadoEditFS10(
+e.target.value
+)
+}
+placeholder="Empleado"
+style={inputStyle}
+/>
+
+<div
+style={{
+display: "flex",
+justifyContent:
+"space-between",
+marginTop: "20px",
+}}
+>
+
+<button
+
+onClick={() =>
+setEditandoFS10(
+null
+)
+}
+
+style={{
+padding: "12px 25px",
+border: "none",
+borderRadius: "10px",
+cursor: "pointer",
+}}
+
+>
+
+Cancelar
+
+</button>
+
+<button
+
+onClick={async () => {
+
+await updateDoc(
+
+doc(
+db,
+"fs10",
+editandoFS10
+),
+
+{
+
+organizacion:
+orgEditFS10,
+
+idMaterial:
+idMaterialEditFS10,
+
+parte:
+parteEditFS10,
+
+cantidad:
+cantidadEditFS10,
+
+empleado:
+empleadoEditFS10,
+
+}
+
+);
+
+setMaterialesFS10(
+
+materialesFS10.map(
+(mat) =>
+
+mat.id ===
+editandoFS10
+
+? {
+
+...mat,
+
+organizacion:
+orgEditFS10,
+
+idMaterial:
+idMaterialEditFS10,
+
+parte:
+parteEditFS10,
+
+cantidad:
+cantidadEditFS10,
+
+empleado:
+empleadoEditFS10,
+
+}
+
+: mat
+
+)
+
+);
+
+setEditandoFS10(
+null
+);
+
+}}
+
+style={{
+padding: "12px 25px",
+border: "none",
+borderRadius: "10px",
+background:
+"#2563eb",
+color: "white",
+cursor: "pointer",
+}}
+
+>
+
+Guardar
+
+</button>
+
+</div>
+
+</div>
+
+</div>
 
 )}
+
+</div>
+
+)}
+
 {pantalla === "jaula1" && (
 
  <div
@@ -2218,59 +2582,42 @@ src={img}
 
       <tbody>
 
-        <tr>
+       {materialesFS10.map(
+(item,index) => (
 
-          <td   style={{
-    ...tdStyle,
-  }}
->
-            SOTV
-          </td>
+<tr key={index}>
 
-<td   style={{
-    ...tdStyle,
-  }}
->
-  MAT-0001
+<td style={tdStyle}>
+{item.organizacion}
 </td>
 
-         <td
-  style={{
-    ...tdStyle,
-  }}
->
-  3-0541-2597-01
+<td style={tdStyle}>
+{item.idMaterial}
 </td>
 
-          <td   style={{
-    ...tdStyle,
-  }}
->
-            250
-          </td>
+<td style={tdStyle}>
+{item.parte}
+</td>
 
-          <td   style={{
-    ...tdStyle,
-  }}
->
-            1023
-          </td>
+<td style={tdStyle}>
+{item.cantidad}
+</td>
 
-          <td   style={{
-    ...tdStyle,
-  }}
->
-            ✏️
-          </td>
+<td style={tdStyle}>
+{item.empleado}
+</td>
 
-          <td   style={{
-    ...tdStyle,
-  }}
->
-            🗑️
-          </td>
+<td style={tdStyle}>
+✏️
+</td>
 
-        </tr>
+<td style={tdStyle}>
+🗑️
+</td>
+
+</tr>
+
+))}
 
       </tbody>
 
@@ -2649,18 +2996,56 @@ maxWidth: "500px",
           Cancelar
         </button>
 
-        <button
-          style={{
-            padding: "15px 30px",
-            border: "none",
-            borderRadius: "10px",
-            background: "#2563eb",
-            color: "white",
-            cursor: "pointer",
-          }}
-        >
-          Guardar
-        </button>
+      <button
+
+  onClick={async () => {
+
+    const nuevoMaterial = {
+
+      organizacion: orgManual,
+
+      idMaterial:
+        idMaterialManual,
+
+      parte: parteManual,
+
+      cantidad: cantidadManual,
+
+      empleado: empleadoManual,
+
+    };
+
+    await addDoc(
+      collection(db, "fs10"),
+      nuevoMaterial
+    );
+
+    setMaterialesFS10([
+      ...materialesFS10,
+      nuevoMaterial,
+    ]);
+
+    setOrgManual("");
+    setIdMaterialManual("");
+    setParteManual("");
+    setCantidadManual("");
+    setEmpleadoManual("");
+
+    setMostrarManual(false);
+
+  }}
+
+  style={{
+    padding: "15px 30px",
+    border: "none",
+    borderRadius: "10px",
+    background: "#2563eb",
+    color: "white",
+    cursor: "pointer",
+  }}
+>
+  Guardar
+</button>
 
       </div>
 
